@@ -33,10 +33,13 @@ RUN git clone https://github.com/SDL-Hercules-390/hyperion.git . &&\
 # hercules.
 #
 # The docker image expects a working area mounted to /opt/hercules
-# and in that directory there must be the configuratio under conf/herculues.cnf
+#
+# (docker option -v /my/hercules-host-env:/opt/hercules)
+#
+# and in that directory there must be the configuratiom under conf/herculues.cnf
 # The start script inside the hercules console has to be under scripts/ipl.rc
 #
-#  <DirecotryMountedUnder/opt/hercules>
+#  /my/hercules-host-env
 #   .
 #   +--conf/hercules.cnf
 #   +--scripts/ipl.rc
