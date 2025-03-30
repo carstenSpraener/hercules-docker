@@ -1,0 +1,8 @@
+#!/bin/bash
+
+(
+  cd /opt/hercules || exit
+  HERCULES_RC="$(pwd)/scripts/ipl.rc"
+  export HERCULES_RC
+  hercules -f "$(pwd)/conf/hercules.cnf" -d >3033.log
+)

@@ -1,0 +1,19 @@
+#!/bin/bash
+#
+# Start the hercules emulator on a configured environment.
+# usage: hcStart <PATH_TO_HERCULES_ENVIRONMENT> <name>
+# PATH_TO_HERCULES_ENVIRONMENT: The locals environment like TK4 or ZOS conofigured for hercules
+# name: A name for the container to run. The name will be hercules-<name>
+#
+# Example:
+# hcStart $HOME/TK4 tk4
+#
+# This will start a new hercules in the $HOME/TK4 environment and the container will be named hercules-tk4
+
+docker run --rm \
+    -v $1:/opt/hercules \
+    -p 3270:3270 \
+    -p 3278:3278 \
+    -p 8038:8038 \
+    --name hercules-$2 \
+    hercules-hyperion
