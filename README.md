@@ -3,6 +3,7 @@
 This project is mainly a Dockerfile that pulls, builds and runs the hercules 
 IBM Host emulator.
 
+![img.png](doc/image/start.png)
 ## Building and running
 
 ```bash
