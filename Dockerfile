@@ -5,7 +5,7 @@
 # The extra software is installed with apt.
 #
 FROM debian:stable-slim AS env
-
+ENV DEBIAN_FRONTEND=noninteractive
 RUN mkdir /opt/build &&\
     apt-get update &&\
     apt-get -y install git wget zip time &&\
@@ -28,12 +28,6 @@ RUN git clone https://github.com/SDL-Hercules-390/hyperion.git . &&\
     make install &&\
     /sbin/ldconfig -v
 
-FROM build as installed
-
-RUN wget https://www.prince-webdesign.nl/images/downloads/mvs-tk5.zip &&\
-    unzip mvs-tk5.zip -d /opt/hercules; mv /opt/hercules/mvs-tk5/* /opt/hercules/
-
-
 #
 # With the hercules hyperion build it is no easy to Start
 # hercules.
@@ -50,10 +44,17 @@ RUN wget https://www.prince-webdesign.nl/images/downloads/mvs-tk5.zip &&\
 #   +--conf/hercules.cnf
 #   +--scripts/ipl.rc
 #
-FROM instsalled AS hercules-hyperion
+FROM build AS hercules-hyperion
 WORKDIR /opt/build
-VOLUME /opt/hercules
 
 COPY container-start .
+
+# Mount an eventually different HOST environment here
+VOLUME /opt/hercules
+
+# These are the ports needed to connect clients to the HOST
+EXPOSE 3270
+EXPOSE 3278
+EXPOSE 8083
 
 CMD ["/bin/bash", "/opt/build/container-start"]
