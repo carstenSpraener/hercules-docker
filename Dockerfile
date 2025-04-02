@@ -28,6 +28,12 @@ RUN git clone https://github.com/SDL-Hercules-390/hyperion.git . &&\
     make install &&\
     /sbin/ldconfig -v
 
+FROM build as installed
+
+RUN wget https://www.prince-webdesign.nl/images/downloads/mvs-tk5.zip &&\
+    unzip mvs-tk5.zip -d /opt/hercules; mv /opt/hercules/mvs-tk5/* /opt/hercules/
+
+
 #
 # With the hercules hyperion build it is no easy to Start
 # hercules.
@@ -44,7 +50,7 @@ RUN git clone https://github.com/SDL-Hercules-390/hyperion.git . &&\
 #   +--conf/hercules.cnf
 #   +--scripts/ipl.rc
 #
-FROM build AS hercules-hyperion
+FROM instsalled AS hercules-hyperion
 WORKDIR /opt/build
 
 COPY container-start .

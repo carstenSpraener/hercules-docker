@@ -25,6 +25,7 @@ you delete the container. So this is for tests only.
 ![img.png](doc/image/start.png)
 
 ### Running on a pre installed MVS/OS390/ZOS environment
+
 If you have a preinstalled MVS, OS390, ZOS or any other hercules 
 environment you can mount it to the containers directory ```/opt/hercules```.
 
@@ -32,7 +33,7 @@ This also makes your TK5 environment persistent over multiple launches of
 the image. If the folder is empty, the container will install TK5. If it 
 finds a not empty directory it will start that environment.
 
-To do so call the ```hcStart``` command with tro 
+To do so call the ```hcStart``` command with two 
 parameters:
 
 ```bash
