@@ -5,10 +5,10 @@
 # The extra software is installed with apt.
 #
 FROM debian:stable-slim AS env
-
+ENV DEBIAN_FRONTEND=noninteractive
 RUN mkdir /opt/build &&\
     apt-get update &&\
-    apt-get -y install git wget time &&\
+    apt-get -y install git wget zip time &&\
     apt-get -y install build-essential cmake flex gawk m4 autoconf automake libtool-bin libltdl-dev &&\
     apt-get -y install libbz2-dev zlib1g-dev &&\
     apt-get -y install libcap2-bin
@@ -46,8 +46,15 @@ RUN git clone https://github.com/SDL-Hercules-390/hyperion.git . &&\
 #
 FROM build AS hercules-hyperion
 WORKDIR /opt/build
-VOLUME /opt/hercules
 
 COPY container-start .
+
+# Mount an eventually different HOST environment here
+VOLUME /opt/hercules
+
+# These are the ports needed to connect clients to the HOST
+EXPOSE 3270
+EXPOSE 3278
+EXPOSE 8083
 
 CMD ["/bin/bash", "/opt/build/container-start"]

@@ -2,7 +2,18 @@
 
 (
   cd /opt/hercules || exit
-  HERCULES_RC="$(pwd)/scripts/ipl.rc"
-  export HERCULES_RC
-  hercules -f "$(pwd)/conf/hercules.cnf" -d >3033.log
+  if [ -z "$( ls -A '.' )" ]; then
+    echo "hercules-hyperion-docker-container: The /opt/hercules directory seems to be empty. Installing TK5"
+    wget https://www.prince-webdesign.nl/images/downloads/mvs-tk5.zip &&\
+    unzip mvs-tk5.zip
+    mv /opt/hercules/mvs-tk5/* /opt/hercules/
+    rm -f mvs-tk5.zip mvs-tk5
+  fi
+  if [ -f mvs ]; then
+    sh ./mvs
+  else
+    HERCULES_RC="$(pwd)/scripts/ipl.rc"
+    export HERCULES_RC
+    hercules -f "$(pwd)/conf/hercules.cnf" -d >3033.log
+  fi
 )

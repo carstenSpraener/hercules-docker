@@ -1,0 +1,41 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: hercules-pvc-init
+spec:
+  template:
+    spec:
+      containers:
+        - name: hercules-pvc-init
+          image: image-registry.openshift-image-registry.svc:5000/hercules/hercules-tk5-install:latest # Image-Pfad nach Build anpassen
+          volumeMounts:
+            - name: hercules-storage
+              mountPath: /data
+      volumes:
+        - name: hercules-storage
+          persistentVolumeClaim:
+            claimName: hercules-pvc
+      restartPolicy: Never
+  backoffLimit: 4
+---
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: hercules-tk5-install-build
+spec:
+  source:
+    git:
+      uri: https://github.com/carstenSpraener/hercules-docker.git
+      ref: dev-openShift-deployment
+    contextDir: openShift/tk5-install
+  strategy:
+    type: Docker
+  output:
+    to:
+      kind: ImageStreamTag
+      name: hercules-tk5-install:latest
+---
+apiVersion: image.openshift.io/v1 # ImageStream-Definition hinzufügen
+kind: ImageStream
+metadata:
+  name: hercules-tk5-install
