@@ -1,0 +1,76 @@
+apiVersion: image.openshift.io/v1 # ImageStream-Definition hinzufügen
+kind: ImageStream
+metadata:
+  name: hercules-hyperion
+---
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: hercules-build
+spec:
+  source:
+    git:
+      uri: https://github.com/carstenSpraener/hercules-docker.git
+      ref: dev-openShift-deployment
+    contextDir: . # Pfad zum Dockerfile im Repository
+  strategy:
+    type: Docker
+  output:
+    to:
+      kind: ImageStreamTag
+      name: hercules-hyperion:latest
+  resources:
+    requests:
+      ephemeral-storage: "6Gi"
+    limits:
+      ephemeral-storage: "8Gi"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hercules-hyperion
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: hercules
+  template:
+    metadata:
+      labels:
+        app: hercules
+    spec:
+      containers:
+        - name: hercules-hyperion
+          image: image-registry.openshift-image-registry.svc:5000/hercules/hercules-hyperion:latest # Image-Pfad nach dem Build anpassen
+          ports:
+            - containerPort: 3270
+            - containerPort: 3278
+            - containerPort: 8083
+          volumeMounts:
+            - name: hercules-storage
+              mountPath: /opt/hercules
+      volumes:
+        - name: hercules-storage
+          persistentVolumeClaim:
+            claimName: hercules-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hercules-service
+spec:
+  selector:
+    app: hercules
+  ports:
+    - protocol: TCP
+      port: 3270
+      targetPort: 3270
+      name: 3270-terminal-connector
+    - protocol: TCP
+      port: 3278
+      targetPort: 3278
+      name: port-3278
+    - protocol: TCP
+      port: 8083
+      targetPort: 8083
+      name: web-status-connector

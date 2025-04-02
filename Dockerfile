@@ -5,7 +5,7 @@
 # The extra software is installed with apt.
 #
 FROM debian:stable-slim AS env
-
+ENV DEBIAN_FRONTEND=noninteractive
 RUN mkdir /opt/build &&\
     apt-get update &&\
     apt-get -y install git wget zip time &&\
@@ -52,8 +52,15 @@ RUN wget https://www.prince-webdesign.nl/images/downloads/mvs-tk5.zip &&\
 #
 FROM instsalled AS hercules-hyperion
 WORKDIR /opt/build
-VOLUME /opt/hercules
 
 COPY container-start .
+
+# Mount an eventually different HOST environment here
+VOLUME /opt/hercules
+
+# These are the ports needed to connect clients to the HOST
+EXPOSE 3270
+EXPOSE 3278
+EXPOSE 8083
 
 CMD ["/bin/bash", "/opt/build/container-start"]
